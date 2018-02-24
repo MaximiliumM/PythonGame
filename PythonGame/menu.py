@@ -115,13 +115,25 @@ def showStatus():
 
 def showInventory():
 	weapons = ""
+	if len(player.pl_inventory.allWeapons) == 0:
+		weapons = "* Nenhum *\n"
+		
 	armors = ""
-	potions = ""
+	if len(player.pl_inventory.allArmors) == 0:
+		armors = "* Nenhum *\n"
+	
+	potions = ""	
+	if len(player.pl_inventory.allPotions) == 0:
+		potions = "* Nenhum *\n"
+		
 	questItems = ""
+	if len(player.pl_inventory.questItems) == 0:
+		questItems = "* Nenhum *\n"
+		
 	equipped = "- %s\n- %s\n" % (player.pl_inventory.currentWeapon.name,
 							   player.pl_inventory.currentArmor.name)
 	loop_counter = 0
-
+	
 	for weapon in player.pl_inventory.allWeapons:
 		count = player.pl_inventory.allWeapons.count(weapon)
 		if loop_counter > 0:
@@ -284,7 +296,7 @@ O que você quer fazer?
 				showStatus()
 				return menu(room)
 			elif choice == "4":
-				shop.vendor()
+				#shop.vendor()
 				return room.walk()
 			else:
 				print "\t*** Escolha um dos números do menu ***\n"

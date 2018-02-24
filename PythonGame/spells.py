@@ -7,6 +7,7 @@ class Spell(object):
 	def __init__(self, name, amount, mana, hostility, statAffected, operator, turns):
 		self.name = name
 		self.manaCost = mana
+		#self.lvlNeeded = lvl
 		self.amount = amount
 		self.hostility = hostility
 		self.stat = statAffected
@@ -99,11 +100,15 @@ class Spell(object):
 			
 			return False
 
+# -- Spells Database --
+# Spell(name, amount, mana, hostility, statAffected, operator, turns)
+
 healing = Spell("Cura", 8, 20, False, "hp", "+", 1)
 fireball = Spell("Bola de Fogo", 6, 20, True, "hp", "*", 1)
 bless = Spell("Bless", 1, 40, False, "all", "+", 3)
 rage = Spell("Fúria", 6, 10, False, "str", "+", 2)
 alacrity = Spell("Alacrity", 4, 10, False, "dex", "+", 2)
+freeze = Spell("Freeze", 6, 20, True, "hp", "*", 1) 
 
 barbarian_spells = [rage]
 mage_spells = [healing, fireball, bless]

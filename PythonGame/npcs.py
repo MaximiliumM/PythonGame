@@ -4,18 +4,10 @@ from random import randint
 import quests
 
 class NPC(object):
-	def __init__(self, name, num):
+	def __init__(self, name):
 		self.name = name
-		self.questNum = num
 
 	def getTalk(self):
-
-		if self.questNum == 0:
-			self.getRandomTalk()
-		else:
-			quests.getQuest(self.questNum)
-
-	def getRandomTalk(self):
 		talks = [
 		"Oi! Eu não tenho nada a oferecer a você. Adeus!",
 		"Maldição! Não consigo entender porque esse jogo não faz sentido!",
@@ -24,7 +16,25 @@ class NPC(object):
 		"Por que você tá falando comigo?"]
 
 		print "%s: %s" % (self.name, talks[randint(0, len(talks) - 1)])
+		
 
-johnsmith = NPC("John Smith", 0)
-oliver = NPC("Oliver", 1)
-stranger = NPC("Encapuzado", 2)
+class QuestNPC(NPC):
+	def __init__(self, name, questNum):
+		super(QuestNPC, self).__init__(name)
+		self.questNum = questNum
+		
+	def getTalk(self):
+		print "%s:\n%s" % (self.name, quests.allQuests[self.questNum].startQuest())
+		
+		if quests.allQuests[self.questNum].accepted == False:
+			self.dialogue()
+		
+	def dialogue(self):
+		print "%s:\n%s" % (self.name, quests.allQuests[self.questNum].getDialogue())
+
+# -- NPCs ---
+johnsmith = NPC("John Smith")
+
+# -- Quest NPCs --
+oliver = QuestNPC("Oliver", 0)
+stranger = QuestNPC("Encapuzado", 1)

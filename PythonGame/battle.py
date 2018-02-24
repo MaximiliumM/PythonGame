@@ -3,6 +3,7 @@
 import player
 import monsters
 import menu
+import time
 
 turn = 0
 turn_check = object
@@ -17,6 +18,7 @@ def attack(monster):
 	global buff
 
 	while monster.hp > 0 and player.pl.hp > 0:
+		time.sleep(1)
 		print "\t*** Batalha ***\n"
 		print "HP: %d/%d" % (player.pl.hp, player.pl.maxHP)
 		print "Mana: %d/%d\n" % (player.pl.mana, player.pl.maxMana)
@@ -73,6 +75,8 @@ def attack(monster):
 		else:
 			print "\t*** Escolha um dos números do menu ***\n"
 			attack(monster)
+			
+		time.sleep(1)
 
 		# --- Monster Turn ---
 		
@@ -80,6 +84,7 @@ def attack(monster):
 
 			print "\t*** Turno do Inimigo ***\n"
 			hit = checkHit(monster, player.pl)
+			time.sleep(2)
 			if hit == "Critical":
 				print "Dano Crítico!"
 				dmg = monster.attkDamage() * 2
@@ -97,9 +102,12 @@ def endBattle(monster):
 		print "Você morreu! Fim de jogo."
 	elif monster.hp <= 0:
 		player.pl.exp += monster.exp
+		print "%s morreu." % monster.name
 		print "Você ganhou %d de experiência!" % monster.exp 
 		player.pl.check_lvlUp()
-
+		
+		time.sleep(1)
+		
 		if monster.drops != "quest":
 			got_item = bool
 			for i in range(monster.drops):
@@ -113,6 +121,8 @@ def endBattle(monster):
 				print "\n\t*** O monstro não deu nada ***\n"
 		else:
 			player.pl_inventory.addQuestItem(monster.getQuestItem())
+			
+		time.sleep(2)
 
 def checkHit(attacker, defender):
 	attk = attacker.hitOrMiss()

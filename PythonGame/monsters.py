@@ -36,6 +36,7 @@ class Monster:
 	def getQuestItem(self):
 		print "\n\t*** Você pegou %s! ***\n" % self.questItem.name
 		return self.questItem
+		
 	
 nightmare = Monster("Pesadelo", 2, 12, 8, 15, 3, 2, 1000, None)
 narguilosa = Monster("Narguilosa", 2, 8, 8, 15, 3, 1, 500, None)

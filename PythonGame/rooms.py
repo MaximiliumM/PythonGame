@@ -116,8 +116,20 @@ class Sala_4_pontes(Room):
 		else:
 			print "\t*** Escolha um dos números do menu ***\n"
 
+class Sala_norte(Room):
+	
+	def story(self):
+		if self.done == False:
+			print """
+	Você vê um homem encapuzado se aproximar.
+	"""
+			npcs.stranger.getTalk()
+				
+			return menu.menu(self)
+		else:
+			return menu.menu(self)
 
 sala_do_acordar = Sala_acordar("Sala do Acordar", True)
 sala_das_quatro_pontes = Sala_4_pontes("Sala das Quatro Pontes", True)
-
+sala_norte = Sala_norte("Sala Norte", False)
 

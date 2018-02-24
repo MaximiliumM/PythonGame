@@ -2,6 +2,7 @@
 
 from random import randint
 import items
+import quests
 
 class Player(object):
 	def __init__(self, theclass, lvl, stre, vit, inte, dex):
@@ -143,6 +144,16 @@ class Inventory(object):
 		self.allArmors = [self.currentArmor]
 		self.allPotions = [potion]
 		self.questItems = []
+		
+	def addItem(self, item):
+		if type(item) == items.Weapon:
+			self.addWeapon(item)
+		elif type(item) == items.Armor:
+			self.addArmor(item)
+		elif type(item) == items.Potion:
+			self.addPotion(item)
+		else:
+			raise ValueError('item type not found.')
 
 	def addWeapon(self, weapon):	
 		self.allWeapons.append(weapon)
@@ -164,13 +175,19 @@ class Inventory(object):
 pl_inventory = Inventory(items.sog, items.chainmail, items.greaterPot)
 # --------------------------
 
-# -- Test Items --
-pl_inventory.addPotion(items.lesserPot)
-pl_inventory.addPotion(items.lesserPot)
-pl_inventory.addPotion(items.lesserPot)
-pl_inventory.addWeapon(items.sog)
-
 pl = object
+
+def debugMode():
+	
+	global pl
+	
+	pl = Player("Mage", 1, 8, 14, 18, 15)
+	
+	# -- Test Items --
+	pl_inventory.addPotion(items.lesserPot)
+	pl_inventory.addPotion(items.lesserPot)
+	pl_inventory.addPotion(items.lesserPot)
+	pl_inventory.addWeapon(items.sog)
 
 def class_choice():
 	global pl
