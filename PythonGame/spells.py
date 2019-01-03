@@ -12,6 +12,7 @@ class Spell(object):
 		self.hostility = hostility
 		self.stat = statAffected
 		self.operator = operator
+		self.turn = 0
 		self.turns = turns
 		self.status = "not active"
 		self.lastRoll = 0
@@ -27,6 +28,8 @@ class Spell(object):
 
 	def debuff(self):
 		self.status = "not active"
+		self.turn = 0
+		
 		if self.stat == "str":
 			player.pl.strBase -= self.lastRoll
 			print "O efeito de %s terminou! Menos %d de Força!\n" % (self.name, self.lastRoll)
@@ -45,11 +48,14 @@ class Spell(object):
 			player.pl.intBase -= self.lastRoll
 			player.pl.dexBase -= self.lastRoll
 			print "O efeito de %s terminou! Menos %d de todos os atributos!\n" % (self.name, self.lastRoll)
-
+		elif self.stat == "hp":
+			print "O efeito de %s terminou!\n" % self.name 
+			
+		self.lastRoll = 0
 		player.pl.updateModifiers()
 
 	def use(self, monster):
-
+	
 		roll = self.getEffect()
 
 		if self.manaCost <= player.pl.mana and self.status != "active":	
@@ -57,6 +63,15 @@ class Spell(object):
 				if self.stat == "hp":
 					monster.hp -= roll
 					print "Você deu %d de dano!\n" % roll
+					
+					if self.turns > 1:
+						self.status = "active"
+						
+						if roll - 1 <= 0:
+							self.lastRoll = 1
+						else:
+							self.lastRoll = roll - 1
+						
 			elif self.hostility == False:
 				if self.stat == "hp":
 					if player.pl.hp + self.amount > player.pl.maxHP: 
@@ -105,11 +120,13 @@ class Spell(object):
 
 healing = Spell("Cura", 8, 20, False, "hp", "+", 1)
 fireball = Spell("Bola de Fogo", 6, 20, True, "hp", "*", 1)
+acidarrow = Spell("Acid Arrow", 8, 30, True, "hp", "*", 1)
+poison = Spell("Poison", 3, 12, True, "hp", "*", 3)
 bless = Spell("Bless", 1, 40, False, "all", "+", 3)
 rage = Spell("Fúria", 6, 10, False, "str", "+", 2)
 alacrity = Spell("Alacrity", 4, 10, False, "dex", "+", 2)
 freeze = Spell("Freeze", 6, 20, True, "hp", "*", 1) 
 
 barbarian_spells = [rage]
-mage_spells = [healing, fireball, bless]
+mage_spells = [fireball, bless, poison]
 rogue_spells = []

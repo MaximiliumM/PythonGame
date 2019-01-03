@@ -1,6 +1,8 @@
+# python2
 # coding: utf-8
 
 import player
+import console
 
 def run(args=None):
 	if args is "debug":
@@ -13,10 +15,11 @@ def run(args=None):
 
 	import rooms
 	import menu
-	next = rooms.sala_norte.story()
+	next = rooms.sala_do_acordar.story()
 
 	while True:
 		room = next.story()
 		next = room.story()
 		
-run('debug')
+run("debug")
+

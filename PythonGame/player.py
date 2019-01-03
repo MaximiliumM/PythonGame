@@ -172,7 +172,7 @@ class Inventory(object):
 		self.questItems = sorted(self.questItems)
 
 # --- Initial Inventory ----
-pl_inventory = Inventory(items.sog, items.chainmail, items.greaterPot)
+pl_inventory = Inventory(items.woodsword, items.barrel, items.lesserPot)
 # --------------------------
 
 pl = object

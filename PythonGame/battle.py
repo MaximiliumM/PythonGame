@@ -7,7 +7,7 @@ import time
 
 turn = 0
 turn_check = object
-buff = object
+buffs = []
 spell_buff = False
 
 def attack(monster):
@@ -15,7 +15,7 @@ def attack(monster):
 	global spell_buff
 	global turn
 	global turn_check
-	global buff
+	global buffs
 
 	while monster.hp > 0 and player.pl.hp > 0:
 		time.sleep(1)
@@ -25,13 +25,6 @@ def attack(monster):
 		print "1. Atacar"
 		print "2. Usar Magia"
 		print "3. Usar Poção\n"
-
-		if spell_buff == True and turn_check != "back":
-			turn += 1
-			if turn > buff.turns:
-				buff.debuff()
-				turn = 0
-				spell_buff = False
 
 		turn_check = object
 
@@ -52,11 +45,12 @@ def attack(monster):
 		elif choice == "2":
 				spell = chooseSpell()
 				if spell != "back":
-					if spell.turns > 1:	
-						spell_buff = True
-						buff = spell
 					cast = spell.use(monster)
-					if cast == False:
+					if cast != False:
+						if spell.turns > 1:	
+							spell_buff = True
+							buffs.append(spell)
+					else:
 						attack(monster)
 				else:
 					turn_check = "back"
@@ -96,6 +90,24 @@ def attack(monster):
 				print "Você levou %d de dano!\n" % dmg
 			else:
 				print "%s errou!\n" % monster.name
+				
+			time.sleep(1)	
+			
+			# --- Effects Check ---	
+				
+			if spell_buff == True and turn_check != "back":
+				for buff in buffs:
+					if buff.hostility == True:
+						monster.hp -= buff.lastRoll
+						print "%s deu %d de dano!\n" % (buff.name, buff.lastRoll)
+						
+					buff.turn += 1
+					if buff.turn > buff.turns:
+						buff.debuff()
+						buffs.remove(buff)
+				
+				if len(buffs) == 0:
+					spell_buff = False
 
 def endBattle(monster):
 	if player.pl.hp <= 0:

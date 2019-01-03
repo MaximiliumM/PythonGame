@@ -7,6 +7,7 @@ import items
 import monsters
 import battle
 import shop
+import console
 			
 itemSelector = []
 
