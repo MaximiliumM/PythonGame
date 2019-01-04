@@ -94,7 +94,7 @@ def addItem():
 		player.pl_inventory.addArmor(item_toAdd)
 	elif isinstance(item_toAdd, items.Potion):
 		player.pl_inventory.addPotion(item_toAdd) 
-	print "Você pegou: %s\n" % item_toAdd.name
+	print "Você pegou: %s" % item_toAdd.name
 
 def showStatus():
 	spells = ""
@@ -212,6 +212,7 @@ def equip(menu_choice):
 			item = unique_items[choice]
 			index = arrayWeapons.index(item)
 			arrayWeapons[index].equip()
+			print "\t*** Você equipou %s ***\n" % arrayWeapons[index].name
 		else:
 			print "\t*** Escolha um dos números do menu ***\n"
 			equip(menu_choice)
@@ -236,6 +237,7 @@ def equip(menu_choice):
 			item = unique_items[choice]
 			index = arrayArmors.index(item)
 			arrayArmors[index].equip()
+			print "\t*** Você equipou %s ***\n" % arrayArmors[index].name
 		else:
 			print "\t*** Escolha um dos números do menu ***\n"
 			equip(menu_choice)
