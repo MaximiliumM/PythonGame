@@ -1,9 +1,10 @@
 # coding: utf-8
 
+from time import sleep
 import player
 import monsters
 import menu
-import time
+
 
 turn = 0
 turn_check = object
@@ -18,7 +19,7 @@ def attack(monster):
 	global buffs
 
 	while monster.hp > 0 and player.pl.hp > 0:
-		time.sleep(1)
+		sleep(1)
 		print "\t*** Batalha ***\n"
 		print "HP: %d/%d" % (player.pl.hp, player.pl.maxHP)
 		print "Mana: %d/%d\n" % (player.pl.mana, player.pl.maxMana)
@@ -70,7 +71,7 @@ def attack(monster):
 			print "\t*** Escolha um dos números do menu ***\n"
 			attack(monster)
 			
-		time.sleep(1)
+		sleep(1)
 
 		# --- Monster Turn ---
 		
@@ -78,8 +79,10 @@ def attack(monster):
 
 			print "\t*** Turno do Inimigo ***\n"
 			hit = checkHit(monster, player.pl)
-			time.sleep(2)
-			if hit == "Critical":
+			sleep(2)
+			if hit == "Condition":
+				print "%s não consegue se mover por estar %s.\n" % (monster.name, monster.condition.message)
+			elif hit == "Critical":
 				print "Dano Crítico!"
 				dmg = monster.attkDamage() * 2
 				player.pl.hp -= dmg
@@ -91,16 +94,12 @@ def attack(monster):
 			else:
 				print "%s errou!\n" % monster.name
 				
-			time.sleep(1)	
+			sleep(1)	
 			
 			# --- Effects Check ---	
 				
 			if spell_buff == True and turn_check != "back":
-				for buff in buffs:
-					if buff.hostility == True:
-						monster.hp -= buff.lastRoll
-						print "%s deu %d de dano!\n" % (buff.name, buff.lastRoll)
-						
+				for buff in buffs:						
 					buff.turn += 1
 					if buff.turn > buff.turns:
 						buff.debuff()
@@ -108,6 +107,9 @@ def attack(monster):
 				
 				if len(buffs) == 0:
 					spell_buff = False
+					
+			if monster.condition != None and turn_check != "back":
+				monster.condition.getEffect(monster)
 
 def endBattle(monster):
 	if player.pl.hp <= 0:
@@ -118,7 +120,7 @@ def endBattle(monster):
 		print "Você ganhou %d de experiência!" % monster.exp 
 		player.pl.check_lvlUp()
 		
-		time.sleep(1)
+		sleep(1)
 		
 		if monster.drops != "quest":
 			got_item = bool
@@ -134,12 +136,14 @@ def endBattle(monster):
 		else:
 			player.pl_inventory.addQuestItem(monster.getQuestItem())
 			
-		time.sleep(2)
+		sleep(2)
 
 def checkHit(attacker, defender):
 	attk = attacker.hitOrMiss()
 	def_ac = defender.ac
-	if attk == "Fumble":
+	if attk == "Condition":
+		return "Condition"
+	elif attk == "Fumble":
 		return False
 	elif attk == "Critical":
 		return "Critical"

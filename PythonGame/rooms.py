@@ -81,9 +81,9 @@ class Sala_4_pontes(Room):
 
 			raw_input("Pressione ENTER para continuar.")
 
-			battle.attack(monsters.empada)
+			battle.attack(monsters.nightmare)
 			
-			battle.endBattle(monsters.empada)
+			battle.endBattle(monsters.nightmare)
 
 			print """
 	Cansado, você levanta os olhos e olha para a forma desforma
