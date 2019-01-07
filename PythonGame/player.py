@@ -28,6 +28,7 @@ class Player(object):
 		self.exp_needed = 1000
 		self.crit = 2
 		self.bonus = 0
+		self.condition = None
 
 		# -- Spells --
 		self.class_spells = []
@@ -122,13 +123,17 @@ class Player(object):
 		self.index += 1
 
 	def hitOrMiss(self):
-		roll = randint(1, 20)
-		if roll == 1:
-			return "Fumble"
-		elif roll == 20:
-			return "Critical"
+		if self.condition != None:
+			if self.condition.name == "Freeze" or self.condition.name == "Paralysis":
+				return "Condition"
 		else:
-			return roll + self.dexMod
+			roll = randint(1, 20)
+			if roll == 1:
+				return "Fumble"
+			elif roll == 20:
+				return "Critical"
+			else:
+				return roll + self.dexMod
 
 
 	def attkDamage(self):
