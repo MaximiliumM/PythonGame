@@ -13,23 +13,23 @@ class Condition(object):
 		self.message = message
 		self.status = "not active"
 		
-	def getEffect(self, monster):	
+	def getEffect(self, target):	
 		if self.status == "not active":
 			if self.checkAfflict():
-				monster.condition = self
+				target.condition = self
 				self.status = "active"
-				print "%s está %s.\n" % (monster.name, self.message)
+				print "%s está %s.\n" % (target.name, self.message)
 			else:
 				print "%s falhou!\n" % self.name
 			
 		elif self.status == "active":
 			if self.amount != 0:
 				roll = randint(1, self.amount)
-				monster.hp -= roll
+				target.hp -= roll
 				print "%s deu %d de dano!\n" % (self.name, roll)
 			
 			if self.checkDebuff():
-				monster.condition = None
+				target.condition = None
 				print "%s não está mais em efeito!\n" % self.name
 				
 			sleep(1)
@@ -64,53 +64,54 @@ class Spell(object):
 		self.status = "not active"
 		self.accuracy = accuracy
 		self.condition = condition
+		self.lastRoll = 0
 
-	def getEffect(self):
+	def getEffect(self, user):
 		roll = randint(1, self.amount)
 		if self.operator == "+":
-			return roll + player.pl.level
+			return roll + user.level
 		elif self.operator == "*":
-			return roll * player.pl.level
+			return roll * user.level
 		else:
 			return roll
 
-	def debuff(self):
+	def debuff(self, user):
 		self.status = "not active"
 		self.turn = 0
 		
 		if self.stat == "str":
-			player.pl.strBase -= self.lastRoll
+			user.strBase -= self.lastRoll
 			print "O efeito de %s terminou! Menos %d de Força!\n" % (self.name, self.lastRoll)
 		elif self.stat == "vit":
-			player.pl.vitBase -= self.lastRoll
+			user.vitBase -= self.lastRoll
 			print "O efeito de %s terminou! Menos %d de Vitalidade!\n" % (self.name, self.lastRoll)
 		elif self.stat == "int":
-			player.pl.intBase -= self.lastRoll
+			user.intBase -= self.lastRoll
 			print "O efeito de %s terminou! Menos %d de Inteligência!\n" % (self.name, self.lastRoll)
 		elif self.stat == "dex":
-			player.pl.dexBase -= self.lastRoll
+			user.dexBase -= self.lastRoll
 			print "O efeito de %s terminou! Menos %d de Destreza!\n" % (self.name, self.lastRoll)
 		elif self.stat == "all":
-			player.pl.strBase -= self.lastRoll
-			player.pl.vitBase -= self.lastRoll
-			player.pl.intBase -= self.lastRoll
-			player.pl.dexBase -= self.lastRoll
+			user.strBase -= self.lastRoll
+			user.vitBase -= self.lastRoll
+			user.intBase -= self.lastRoll
+			user.dexBase -= self.lastRoll
 			print "O efeito de %s terminou! Menos %d de todos os atributos!\n" % (self.name, self.lastRoll)
 		elif self.stat == "hp":
 			print "O efeito de %s terminou!\n" % self.name 
 			
 		self.lastRoll = 0
-		player.pl.updateModifiers()
+		user.updateModifiers()
 
-	def use(self, monster):
+	def use(self, user, target):
 	
-		roll = self.getEffect()
+		roll = self.getEffect(user)
 
-		if self.manaCost <= player.pl.mana and self.status != "active":	
+		if self.manaCost <= user.mana and self.status != "active":	
 			if self.hostility == True:
 								
 				if self.stat == "hp":
-					monster.hp -= roll
+					target.hp -= roll
 					print "Você deu %d de dano!\n" % roll
 					
 					sleep(1)
@@ -119,40 +120,40 @@ class Spell(object):
 						self.status = "active"
 						
 				if self.condition != None:
-					self.condition.getEffect(monster)
+					self.condition.getEffect(target)
 						
 			elif self.hostility == False:
 				if self.stat == "hp":
-					if player.pl.hp + self.amount > player.pl.maxHP: 
-						print "Você recuperou %d de vida!\n" % (player.pl.maxHP - player.pl.hp)
-						player.pl.hp = player.pl.maxHP
+					if user.hp + self.amount > user.maxHP: 
+						print "Você recuperou %d de vida!\n" % (user.maxHP - user.hp)
+						user.hp = user.maxHP
 					else:
-						player.pl.hp += roll
+						user.hp += roll
 						print "Você recuperou %d de vida!\n" % roll
 				elif self.stat == "str":
-					player.pl.strBase += roll
+					user.strBase += roll
 					print "Você aumentou %d de Força!\n" % roll
 				elif self.stat == "vit":
-					player.pl.vitBase += roll
+					user.vitBase += roll
 					print "Você aumentou %d de Vitalidade!\n" % roll
 				elif self.stat == "int":
-					player.pl.intBase += roll
+					user.intBase += roll
 					print "Você aumentou %d de Inteligência!\n" % roll
 				elif self.stat == "dex":
-					player.pl.dexBase += roll
+					user.dexBase += roll
 					print "Você aumentou %d de Destreza!\n" % roll
 				elif self.stat == "all":
-					player.pl.strBase += roll
-					player.pl.vitBase += roll
-					player.pl.intBase += roll
-					player.pl.dexBase += roll
+					user.strBase += roll
+					user.vitBase += roll
+					user.intBase += roll
+					user.dexBase += roll
 					print "Você aumentou %d de todos os atributos!\n" % roll
 
-			player.pl.mana -= self.manaCost
+			user.mana -= self.manaCost
 
 			if self.stat != "hp":
 				self.status = "active"
-				player.pl.updateModifiers()
+				user.updateModifiers()
 			return True
 
 		else:

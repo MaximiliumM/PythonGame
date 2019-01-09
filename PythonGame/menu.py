@@ -28,7 +28,7 @@ def getRandomItem():
 	allItems = items.allItems
 
 	if x == 1:
-		player.pl_inventory.addWeapon(items.cheaterSword)
+		player.pl.inventory.addWeapon(items.cheaterSword)
 	elif x > 1 and x <= 6: 
 		for item in allItems:
 			if item.percentage == 0.05:
@@ -89,11 +89,11 @@ def addItem():
 
 	item_toAdd = random.choice(itemSelector)
 	if isinstance(item_toAdd, items.Weapon):
-		player.pl_inventory.addWeapon(item_toAdd)
+		player.pl.inventory.addWeapon(item_toAdd)
 	elif isinstance(item_toAdd, items.Armor):
-		player.pl_inventory.addArmor(item_toAdd)
+		player.pl.inventory.addArmor(item_toAdd)
 	elif isinstance(item_toAdd, items.Potion):
-		player.pl_inventory.addPotion(item_toAdd) 
+		player.pl.inventory.addPotion(item_toAdd) 
 	print "Você pegou: %s" % item_toAdd.name
 
 def showStatus():
@@ -116,27 +116,27 @@ def showStatus():
 
 def showInventory():
 	weapons = ""
-	if len(player.pl_inventory.allWeapons) == 0:
+	if len(player.pl.inventory.allWeapons) == 0:
 		weapons = "* Nenhum *\n"
 		
 	armors = ""
-	if len(player.pl_inventory.allArmors) == 0:
+	if len(player.pl.inventory.allArmors) == 0:
 		armors = "* Nenhum *\n"
 	
 	potions = ""	
-	if len(player.pl_inventory.allPotions) == 0:
+	if len(player.pl.inventory.allPotions) == 0:
 		potions = "* Nenhum *\n"
 		
 	questItems = ""
-	if len(player.pl_inventory.questItems) == 0:
+	if len(player.pl.inventory.questItems) == 0:
 		questItems = "* Nenhum *\n"
 		
-	equipped = "- %s\n- %s\n" % (player.pl_inventory.currentWeapon.name,
-							   player.pl_inventory.currentArmor.name)
+	equipped = "- %s\n- %s\n" % (player.pl.inventory.currentWeapon.name,
+							   player.pl.inventory.currentArmor.name)
 	loop_counter = 0
 	
-	for weapon in player.pl_inventory.allWeapons:
-		count = player.pl_inventory.allWeapons.count(weapon)
+	for weapon in player.pl.inventory.allWeapons:
+		count = player.pl.inventory.allWeapons.count(weapon)
 		if loop_counter > 0:
 			loop_counter -= 1
 			continue
@@ -144,8 +144,8 @@ def showInventory():
 		if loop_counter == 0:
 			loop_counter = count - 1
 
-	for armor in player.pl_inventory.allArmors:
-		count = player.pl_inventory.allArmors.count(armor)
+	for armor in player.pl.inventory.allArmors:
+		count = player.pl.inventory.allArmors.count(armor)
 		if loop_counter > 0:
 			loop_counter -= 1
 			continue
@@ -153,8 +153,8 @@ def showInventory():
 		if loop_counter == 0:
 			loop_counter = count - 1
 			
-	for potion in player.pl_inventory.allPotions:
-		count = player.pl_inventory.allPotions.count(potion)
+	for potion in player.pl.inventory.allPotions:
+		count = player.pl.inventory.allPotions.count(potion)
 		if loop_counter > 0:
 			loop_counter -= 1
 			continue
@@ -162,7 +162,7 @@ def showInventory():
 		if loop_counter == 0:
 			loop_counter = count - 1
 
-	for questItem in player.pl_inventory.questItems:
+	for questItem in player.pl.inventory.questItems:
 		questItems += "- %s\n" % (questItem.name)
 
 	print "Equipados:\n", equipped
@@ -183,9 +183,9 @@ def showInventory():
 
 def equip(menu_choice):
 
-	arrayWeapons = player.pl_inventory.allWeapons
-	arrayArmors = player.pl_inventory.allArmors
-	arrayPotions = player.pl_inventory.allPotions
+	arrayWeapons = player.pl.inventory.allWeapons
+	arrayArmors = player.pl.inventory.allArmors
+	arrayPotions = player.pl.inventory.allPotions
 	result = ""
 	count = 1
 	loop_counter = 0
@@ -211,7 +211,7 @@ def equip(menu_choice):
 		if choice < len(unique_items) and choice >= 0:
 			item = unique_items[choice]
 			index = arrayWeapons.index(item)
-			arrayWeapons[index].equip()
+			player.pl.inventory.equip(arrayWeapons[index])
 			print "\t*** Você equipou %s ***\n" % arrayWeapons[index].name
 		else:
 			print "\t*** Escolha um dos números do menu ***\n"
@@ -236,7 +236,7 @@ def equip(menu_choice):
 		if choice < len(unique_items) and choice >= 0:
 			item = unique_items[choice]
 			index = arrayArmors.index(item)
-			arrayArmors[index].equip()
+			player.pl.inventory.equip(arrayArmors[index])
 			print "\t*** Você equipou %s ***\n" % arrayArmors[index].name
 		else:
 			print "\t*** Escolha um dos números do menu ***\n"

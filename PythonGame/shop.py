@@ -54,13 +54,13 @@ def buy():
 			player.pl.gold -= item_bought.price
 			print "Você comprou %s por %d de ouro!\n" % (item_bought.name, item_bought.price)
 			if isinstance(item_bought, items.Weapon):
-				player.pl_inventory.addWeapon(item_bought)
+				player.pl.inventory.addWeapon(item_bought)
 				buy()
 			elif isinstance(item_bought, items.Armor):
-				player.pl_inventory.addArmor(item_bought)
+				player.pl.inventory.addArmor(item_bought)
 				buy()
 			elif isinstance(item_bought, items.Potion):
-				player.pl_inventory.addPotion(item_bought) 
+				player.pl.inventory.addPotion(item_bought) 
 				buy()
 		else:
 			print "\t*** Você não tem ouro suficiente para comprar esse item ***\n"
@@ -74,8 +74,8 @@ def sell():
 	potions = ""
 	loop_counter = 0
 
-	for weapon in player.pl_inventory.allWeapons:
-		count = player.pl_inventory.allWeapons.count(weapon)
+	for weapon in player.pl.inventory.allWeapons:
+		count = player.pl.inventory.allWeapons.count(weapon)
 		if loop_counter > 0:
 			loop_counter -= 1
 			continue
@@ -83,8 +83,8 @@ def sell():
 		if loop_counter == 0:
 			loop_counter = count - 1
 			
-	for armor in player.pl_inventory.allArmors:
-		count = player.pl_inventory.allArmors.count(armor)
+	for armor in player.pl.inventory.allArmors:
+		count = player.pl.inventory.allArmors.count(armor)
 		if loop_counter > 0:
 			loop_counter -= 1
 			continue
@@ -92,8 +92,8 @@ def sell():
 		if loop_counter == 0:
 			loop_counter = count - 1
 			
-	for potion in player.pl_inventory.allPotions:
-		count = player.pl_inventory.allPotions.count(potion)
+	for potion in player.pl.inventory.allPotions:
+		count = player.pl.inventory.allPotions.count(potion)
 		if loop_counter > 0:
 			loop_counter -= 1
 			continue
@@ -123,7 +123,7 @@ def sell():
 
 def show_weapons():
 
-	arrayWeapons = player.pl_inventory.allWeapons
+	arrayWeapons = player.pl.inventory.allWeapons
 	unique_items = []
 	loop_counter = 0
 	result = ""
@@ -166,7 +166,7 @@ def show_weapons():
 
 def show_armors():
 
-	arrayArmors = player.pl_inventory.allArmors
+	arrayArmors = player.pl.inventory.allArmors
 	unique_items = []
 	loop_counter = 0
 	result = ""
@@ -209,7 +209,7 @@ def show_armors():
 
 def show_potions():
 
-	arrayPotions = player.pl_inventory.allPotions
+	arrayPotions = player.pl.inventory.allPotions
 	unique_items = []
 	loop_counter = 0
 	result = ""

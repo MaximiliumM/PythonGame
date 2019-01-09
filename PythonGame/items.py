@@ -12,40 +12,34 @@ class Weapon(Item):
 		super(Weapon, self).__init__(name, info, percent, price)
 		self.dmg = damage
 
-	def equip(self):
-		player.pl_inventory.currentWeapon = self
-
 class Armor(Item):
 	def __init__(self, name, info, resist, percent, price):
 		super(Armor, self).__init__(name, info, percent, price)
 		self.resistance = resist
 
-	def equip(self):
-		player.pl_inventory.currentArmor = self
-
 class Potion(Item):
-	def __init__(self, name, info, healAmount, effect, percent, price):
+	def __init__(self, name, info, healAmount, statAffected, percent, price):
 		super(Potion, self).__init__(name, info, percent, price)
-		self.effectname = effect
+		self.statAffected = statAffected
 		self.amount = healAmount
 
-	def use(self):
-		if self.effectname == "vida":
+	def use(self, user):
+		if self.e == "hp":
 			print "Você recuperou %d pontos de vida!\n" % self.amount
-			if player.pl.hp + self.amount > player.pl.maxHP: 
-				player.pl.hp = player.pl.maxHP
+			if user.hp + self.amount > user.maxHP: 
+				user.hp = user.maxHP
 			else:
-				player.pl.hp += self.amount
-		elif self.effectname == "mana":
+				user.hp += self.amount
+		elif self.statAffected == "mana":
 			print "Você recuperou %d pontos de mana!\n" % self.amount
-			player.pl.mana += self.amount
-		elif self.effectname == "int":
+			user.mana += self.amount
+		elif self.statAffected == "int":
 			if self.amount > 1:
 				print "Você ganhou %d pontos de Inteligência" % self.amount
 			else:
 				print "Você ganhou %d ponto de Inteligência" % self.amount
-			player.pl.intBase += self.amount
-			player.pl.updateModifiers()
+			user.intBase += self.amount
+			user.updateModifiers()
 			
 # -- Weapons -- name, info, damage, percent, price
 		
@@ -69,8 +63,8 @@ dragonScaled = Armor("Armadura de Escama de Dragão", "Escama de um dragão enco
 
 # -- Potions --
 
-greaterPot = Potion("Greater Healing Potion", "Recupera 10 pontos de vida", 10, "vida", 5.00, 30)
-lesserPot = Potion("Lesser Healing Potion", "Recupera 2 pontos de vida", 2, "vida", 10.0, 10)
+greaterPot = Potion("Greater Healing Potion", "Recupera 10 pontos de vida", 10, "hp", 5.00, 30)
+lesserPot = Potion("Lesser Healing Potion", "Recupera 2 pontos de vida", 2, "hp", 10.0, 10)
 intPotion = Potion("Poção do Conhecimento", "Aumenta sua inteligência em +1", 1, "int", 0, 100)
 
 import player

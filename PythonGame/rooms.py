@@ -1,7 +1,8 @@
 # coding: utf-8
 
+from battle import battle
+from party import Party
 import menu
-import battle
 import monsters
 import npcs
 
@@ -81,9 +82,7 @@ class Sala_4_pontes(Room):
 
 			raw_input("Pressione ENTER para continuar.")
 
-			battle.attack(monsters.nightmare)
-			
-			battle.endBattle(monsters.nightmare)
+			battle(Party([monsters.nightmare, monsters.empada], "monster"))
 
 			print """
 	Cansado, você levanta os olhos e olha para a forma desforma

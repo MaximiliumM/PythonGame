@@ -1,12 +1,14 @@
 # coding: utf-8
 
 from random import randint
+from party import pl_party
 import items
 import quests
 
-class Player(object):
-	def __init__(self, theclass, lvl, stre, vit, inte, dex):
 
+class Player(object):
+	def __init__(self, name, theclass, lvl, stre, vit, inte, dex):
+		
 		# -- Base Stats --
 		self.strBase = stre
 		self.vitBase = vit
@@ -18,6 +20,7 @@ class Player(object):
 		self.intMod = self.getModifier(inte)
 		self.dexMod = self.getModifier(dex)
 
+		self.name = name
 		self.theclass = theclass
 		self.hp = self.getInitialHP()
 		self.maxHP = self.hp
@@ -28,7 +31,9 @@ class Player(object):
 		self.exp_needed = 1000
 		self.crit = 2
 		self.bonus = 0
+		self.initiative = 0
 		self.condition = None
+		self.inventory = Inventory(items.woodsword, items.barrel, items.lesserPot)
 
 		# -- Spells --
 		self.class_spells = []
@@ -36,7 +41,7 @@ class Player(object):
 		self.index = 0 # spells index
 	
 		# -- Armor Class --
-		self.ac = 10 + pl_inventory.currentArmor.resistance + self.dexMod
+		self.ac = 10 + self.inventory.currentArmor.resistance + self.dexMod
 
 		# -- Money --
 		self.gold = 2000
@@ -135,10 +140,14 @@ class Player(object):
 			else:
 				return roll + self.dexMod
 
-
 	def attkDamage(self):
-		roll = randint(1, pl_inventory.currentWeapon.dmg)
+		roll = randint(1, self.inventory.currentWeapon.dmg)
 		return self.strMod + roll + self.bonus
+		
+	def rollInitiative(self):
+		roll = randint(1, 20)
+		self.initiative = self.dexMod + roll
+		
 
 class Inventory(object):
 	def __init__(self, weapon, armor, potion):
@@ -149,6 +158,12 @@ class Inventory(object):
 		self.allArmors = [self.currentArmor]
 		self.allPotions = [potion]
 		self.questItems = []
+		
+	def equip(self, item):
+		if type(item) == items.Weapon:
+			self.currentWeapon = item
+		elif type(item) == items.Armor:
+			self.currentArmor = item
 		
 	def addItem(self, item):
 		if type(item) == items.Weapon:
@@ -176,9 +191,6 @@ class Inventory(object):
 		self.questItems.append(item)
 		self.questItems = sorted(self.questItems)
 
-# --- Initial Inventory ----
-pl_inventory = Inventory(items.woodsword, items.barrel, items.lesserPot)
-# --------------------------
 
 pl = object
 
@@ -186,13 +198,22 @@ def debugMode():
 	
 	global pl
 	
-	pl = Player("Mage", 1, 8, 14, 18, 15)
+	pl = Player("Max", "Mage", 1, 8, 14, 18, 15)
+	pl_party.members.append(pl)
+	
+	# NPC Test
+	npc = Player("Luna", "Barbarian", 1, 18, 15, 8, 14)
+	pl_party.members.append(npc)
+	
+	# --- Initial Inventory ----
+	pl.inventory = Inventory(items.woodsword, items.barrel, items.lesserPot)
+	# --------------------------
 	
 	# -- Test Items --
-	pl_inventory.addPotion(items.lesserPot)
-	pl_inventory.addPotion(items.lesserPot)
-	pl_inventory.addPotion(items.lesserPot)
-	pl_inventory.addWeapon(items.sog)
+	pl.inventory.addPotion(items.lesserPot)
+	pl.inventory.addPotion(items.lesserPot)
+	pl.inventory.addPotion(items.lesserPot)
+	pl.inventory.addWeapon(items.sog)
 
 def class_choice():
 	global pl

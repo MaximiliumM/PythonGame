@@ -14,7 +14,9 @@ class Monster:
 		self.condition = None
 		self.drops = treasure
 		self.dexMod = dex
+		self.crit = 2
 		self.exp = expGiven
+		self.initiative = 0
 		self.questItem = quest
 		
 	def spawn(self):
@@ -42,6 +44,10 @@ class Monster:
 				return "Critical"
 			else:
 				return roll + self.dexMod
+				
+	def rollInitiative(self):
+		roll = randint(1, 20)		
+		self.initiative = self.dexMod + roll
 
 	def getQuestItem(self):
 		print "\n\t*** Você pegou %s! ***\n" % self.questItem.name
