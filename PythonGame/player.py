@@ -33,7 +33,10 @@ class Player(object):
 		self.bonus = 0
 		self.initiative = 0
 		self.condition = None
-		self.inventory = Inventory(items.woodsword, items.barrel, items.lesserPot)
+		self.inventory = Inventory(
+			items.itemManager.getItemByName('Espada de Madeira'), 
+			items.itemManager.getItemByName('Barril'),
+			items.itemManager.getItemByName('Lesser Healing Potion'))
 
 		# -- Spells --
 		self.class_spells = []
@@ -135,7 +138,7 @@ class Player(object):
 			roll = randint(1, 20)
 			if roll == 1:
 				return "Fumble"
-			elif roll == 20:
+			elif roll >= self.inventory.currentWeapon.crit:
 				return "Critical"
 			else:
 				return roll + self.dexMod
@@ -201,19 +204,19 @@ def debugMode():
 	pl = Player("Max", "Mage", 1, 8, 14, 18, 15)
 	pl_party.members.append(pl)
 	
-	# NPC Test
+	# NPC Test (name, theclass, lvl, stre, vit, inte, dex)
 	npc = Player("Luna", "Barbarian", 1, 18, 15, 8, 14)
 	pl_party.members.append(npc)
 	
 	# --- Initial Inventory ----
-	pl.inventory = Inventory(items.woodsword, items.barrel, items.lesserPot)
+	#pl.inventory = Inventory(items.woodsword, items.barrel, items.lesserPot)
 	# --------------------------
 	
 	# -- Test Items --
-	pl.inventory.addPotion(items.lesserPot)
-	pl.inventory.addPotion(items.lesserPot)
-	pl.inventory.addPotion(items.lesserPot)
-	pl.inventory.addWeapon(items.sog)
+	pl.inventory.addPotion(items.itemManager.getItemByName('Lesser Healing Potion'))
+	pl.inventory.addPotion(items.itemManager.getItemByName('Lesser Healing Potion'))
+	pl.inventory.addPotion(items.itemManager.getItemByName('Lesser Healing Potion'))
+	pl.inventory.addWeapon(items.itemManager.getItemByName('Sword of God'))
 
 def class_choice():
 	global pl

@@ -227,7 +227,7 @@ def getTarget(monsters):
 		return "back"
 	else:
 		print "\t*** Escolha um dos números do menu ***\n"
-		getTarget(monsters)
+		return getTarget(monsters)
 	
 
 def attack(attacker, target):
@@ -287,7 +287,7 @@ def chooseSpell(player):
 		return "back"
 	else:
 		print "\t*** Escolha um dos números do menu ***\n"
-		chooseSpell(player)
+		return chooseSpell(player)
 		
 def choosePotion():
 	potions = ""
@@ -322,7 +322,7 @@ def choosePotion():
 		return "back"
 	else:
 		print "\t*** Escolha um dos números do menu ***\n"
-		choosePotion()
+		return choosePotion()
 		
 		
 # This function takes an array with

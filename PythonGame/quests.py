@@ -82,13 +82,13 @@ azeitona = QuestItem("Azeitona", "Uma azeitona encontrada em empadas.")
 chapeuFalante = QuestItem("Chapéu Falante", "Um chapéu tagarela safado que quer testar seu conhecimento de Geografia.")
 
 import menu
-import items
+from items import itemManager
 import player
 
 # -- Quests --
 # Quest(name, item, reward, firstEncounter, afterFirstEncounter, acceptText, rejectText, afterReject, endTxt, doneTxt, playerChoices)
 
-q1 = Quest("A Azeitona da Empada", azeitona, items.lesserPot,
+q1 = Quest("A Azeitona da Empada", azeitona, itemManager.getItemByName("Lesser Healing Potion"),
 	"""
 	Você! Você tem que me ajudar! Tenho certeza que você pode me ajudar!
 	Entre na minha loja agora! Você não vai acreditar! É SURREAL!
@@ -119,7 +119,7 @@ q1 = Quest("A Azeitona da Empada", azeitona, items.lesserPot,
 	"""Tá doido? Você parece apavorado. Esse surreal não parece significar boa coisa."""
 	])
 
-q2 = Quest("A Lenda do Chapéu Falante", chapeuFalante, items.intPotion,
+q2 = Quest("A Lenda do Chapéu Falante", chapeuFalante, itemManager.getItemByName("Poção do Conhecimento"),
 	"""
 	Hey, stranger! Você já ouviu falar na Lenda do Chapéu Falante?
 	Dizem que ele é capaz de te dar conhecimento INFINITO!

@@ -1,9 +1,12 @@
 # coding: utf-8
 
-import items
+from items import itemManager
 import player
 
-shop_items = [items.greaterPot, items.lesserPot, items.sog]
+shop_items = [
+	itemManager.getItemByName("Greater Healing Potion"), 
+	itemManager.getItemByName("Lesser Healing Potion"),
+	itemManager.getItemByName("Sword of God")]
 
 def vendor():
 
