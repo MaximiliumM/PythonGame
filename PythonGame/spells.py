@@ -26,11 +26,11 @@ class Condition(object):
 			if self.amount != 0:
 				roll = randint(1, self.amount)
 				target.hp -= roll
-				print "%s deu %d de dano!\n" % (self.name, roll)
+				print "%s levou %d de dano por estar %s!\n" % (target.name, roll, self.message)
 			
 			if self.checkDebuff():
 				target.condition = None
-				print "%s não está mais em efeito!\n" % self.name
+				print "%s não está mais %s!\n" % (target.name, self.message)
 				
 			sleep(1)
 		
@@ -51,12 +51,13 @@ class Condition(object):
 			
 
 class Spell(object):
-	def __init__(self, name, amount, mana, hostility, statAffected, operator, turns, accuracy=100, condition=None):
+	def __init__(self, name, amount, mana, hostility, range, statAffected, operator, turns, accuracy=100, condition=None):
 		self.name = name
 		self.manaCost = mana
 		#self.lvlNeeded = lvl
 		self.amount = amount
 		self.hostility = hostility
+		self.range = range
 		self.stat = statAffected
 		self.operator = operator
 		self.turn = 0
@@ -103,51 +104,56 @@ class Spell(object):
 		self.lastRoll = 0
 		user.updateModifiers()
 
-	def use(self, user, target):
-	
+	def use(self, user, targets):
+		
 		roll = self.getEffect(user)
 
 		if self.manaCost <= user.mana and self.status != "active":	
-			if self.hostility == True:
-								
-				if self.stat == "hp":
-					target.hp -= roll
-					print "Você deu %d de dano!\n" % roll
+			
+			print "%s castou %s!\n" % (user.name, self.name)	
+			
+			for target in targets:
+				if self.hostility == True:
+					
+					if self.stat == "hp":
+						target.hp -= roll
+						sleep(1)
+						print "%s levou %d de dano!\n" % (target.name, roll)
 					
 					sleep(1)
-					
+						
 					if self.turns > 1:
 						self.status = "active"
-						
-				if self.condition != None:
-					self.condition.getEffect(target)
-						
-			elif self.hostility == False:
-				if self.stat == "hp":
-					if user.hp + self.amount > user.maxHP: 
-						print "Você recuperou %d de vida!\n" % (user.maxHP - user.hp)
-						user.hp = user.maxHP
-					else:
-						user.hp += roll
-						print "Você recuperou %d de vida!\n" % roll
-				elif self.stat == "str":
-					user.strBase += roll
-					print "Você aumentou %d de Força!\n" % roll
-				elif self.stat == "vit":
-					user.vitBase += roll
-					print "Você aumentou %d de Vitalidade!\n" % roll
-				elif self.stat == "int":
-					user.intBase += roll
-					print "Você aumentou %d de Inteligência!\n" % roll
-				elif self.stat == "dex":
-					user.dexBase += roll
-					print "Você aumentou %d de Destreza!\n" % roll
-				elif self.stat == "all":
-					user.strBase += roll
-					user.vitBase += roll
-					user.intBase += roll
-					user.dexBase += roll
-					print "Você aumentou %d de todos os atributos!\n" % roll
+							
+					if self.condition != None:
+						self.condition.getEffect(target)
+							
+				elif self.hostility == False:
+					if self.stat == "hp":
+						if target.hp + self.amount > target.maxHP: 
+							print "%s recuperou %d de vida!\n" % (target.name, (target.maxHP - target.hp))
+							target.hp = target.maxHP
+						else:
+							target.hp += roll
+							print "%s recuperou %d de vida!\n" % (target.name, roll)
+					elif self.stat == "str":
+						target.strBase += roll
+						print "%s aumentou %d de Força!\n" % (target.name, roll)
+					elif self.stat == "vit":
+						target.vitBase += roll
+						print "%s aumentou %d de Vitalidade!\n" % (target.name, roll)
+					elif self.stat == "int":
+						target.intBase += roll
+						print "%s aumentou %d de Inteligência!\n" % (target.name, roll)
+					elif self.stat == "dex":
+						target.dexBase += roll
+						print "%s aumentou %d de Destreza!\n" % (target.name, roll)
+					elif self.stat == "all":
+						target.strBase += roll
+						target.vitBase += roll
+						target.intBase += roll
+						target.dexBase += roll
+						print "%s aumentou %d de todos os atributos!\n" % (target.name, roll)
 
 			user.mana -= self.manaCost
 
@@ -160,25 +166,26 @@ class Spell(object):
 			if self.status == "active":
 				print "\t*** %s já está ativo ***\n" % self.name
 			else:
-				print "\t*** Você não tem Mana suficiente ***\n"
+				print "\t*** %s não tem Mana suficiente ***\n" % user.name
 			
 			return False
 			
 		sleep(1)
 			
 # -- Spells Database --
-# Spell(name, amount, mana, hostility, statAffected, operator, turns, accuracy, condition)
+# Spell(name, amount, mana, hostility, range, statAffected, operator, turns, accuracy, condition)
 # Condition(name, amount, afflictChance, cureChance, message)
 
-healing = Spell("Cura", 8, 20, False, "hp", "+", 1)
-fireball = Spell("Bola de Fogo", 6, 20, True, "hp", "*", 1, 90, Condition("Burn", 3, 25, 25, "queimado"))
-acidarrow = Spell("Acid Arrow", 8, 30, True, "hp", "*", 1, 90)
-poison = Spell("Poison Spray", 3, 12, True, "hp", "*", 1, 100, Condition("Poison", 3, 75, 25, "envenenado"))
-bless = Spell("Bless", 1, 40, False, "all", "+", 3)
-rage = Spell("Fúria", 6, 10, False, "str", "+", 2)
-alacrity = Spell("Alacrity", 4, 10, False, "dex", "+", 2)
-freeze = Spell("Freeze", 6, 20, True, "hp", "*", 1, 100, Condition("Freeze", 0, 30, 30, "congelado")) 
+healing = Spell("Cura", 8, 20, False, "target", "hp", "+", 1)
+fireball = Spell("Bola de Fogo", 6, 20, True, "target", "hp", "*", 1, 90, Condition("Burn", 3, 25, 25, "queimado"))
+hailstorm = Spell("Hailstorm", 10, 120, True, "area", "hp", "*", 1, 70, Condition("Burn", 3, 25, 25, "queimado"))
+acidarrow = Spell("Acid Arrow", 8, 30, True, "target", "hp", "*", 1, 90)
+poison = Spell("Poison Spray", 3, 12, True, "target", "hp", "*", 1, 100, Condition("Poison", 3, 75, 25, "envenenado"))
+bless = Spell("Bless", 1, 40, False, "target", "all", "+", 3)
+rage = Spell("Fúria", 6, 10, False, "self", "str", "+", 2)
+alacrity = Spell("Alacrity", 4, 10, False, "self", "dex", "+", 2)
+freeze = Spell("Freeze", 6, 20, True, "target", "hp", "*", 1, 100, Condition("Freeze", 0, 30, 30, "congelado")) 
 
 barbarian_spells = [rage]
-mage_spells = [fireball, freeze, poison]
+mage_spells = [fireball, hailstorm, poison]
 rogue_spells = []

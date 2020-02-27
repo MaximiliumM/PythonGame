@@ -54,11 +54,13 @@ def battle(monstersParty):
 				
 				print "\tTurno - %s\n" % attacker.name
 				
-				if isinstance(attacker, player.Player):
-					playerMenu(attacker, monstersParty.members)
+				if (attacker.condition != None) and (attacker.condition.name == "Freeze" or attacker.condition.name == "Paralysis"):
+						print "%s não consegue se mover por estar %s.\n" % (attacker.name, attacker.condition.message)
 				else:
-					target = getTargetForMonsters()
-					attack(attacker, target)
+					if isinstance(attacker, player.Player):
+						playerMenu(attacker, monstersParty.members)
+					else:
+						monsterTurn(attacker)
 				
 				checkCondition(attacker)	
 				checkIfAlive([monstersParty, pl_party])
@@ -67,7 +69,8 @@ def battle(monstersParty):
 					break
 			
 		turn += 1
-			
+	
+	# While-loop has been broken		
 	endBattle([monstersParty, pl_party])
 	return
 	
@@ -112,22 +115,21 @@ def endBattle(group):
 # For now, buffs are disabled
 def checkCondition(attacker):
 	
-#	global buffs
-#	global spell_buff
-#	
-#	if spell_buff == True:
-#		for buff in buffs:						
-#			buff.turn += 1
-#			if buff.turn > buff.turns:
-#				buff.debuff()
-#				buffs.remove(buff)
-#		
-#		if len(buffs) == 0:
-#			spell_buff = False
-#			
-
-		if attacker.condition != None:
-			attacker.condition.getEffect(attacker)
+	global buffs
+	global spell_buff
+	
+	if spell_buff == True:
+		for buff in buffs:						
+			buff.turn += 1
+			if buff.turn > buff.turns:
+				buff.debuff()
+				buffs.remove(buff)
+		
+		if len(buffs) == 0:
+			spell_buff = False
+			
+	if attacker.condition != None:
+		attacker.condition.getEffect(attacker)
 	
 def checkInitiative(group):
 	
@@ -160,13 +162,24 @@ def playerMenu(player, monsters):
 		if spell == "back":
 			playerMenu(player, monsters)
 		else:
-			target = getTarget(monsters)
+			if spell.hostility == True:
+				if spell.range == "area":
+					target = monsters
+				else:
+					target = [getTarget(monsters)]
+			else:
+				if spell.range == "self":
+					target = [player]
+				elif spell.range == "area":
+					target = pl_party.members
+				else:
+					target = [getTarget(pl_party.members)]
 			
 			if target == "back":
 				playerMenu(player, monsters)
 			else:
 				cast = spell.use(player, target)
-				if cast != False:
+				if cast != False:					
 					if spell.turns > 1:
 						spell_buff = True
 						buffs.append(spell)
@@ -188,6 +201,87 @@ def playerMenu(player, monsters):
 		playerMenu(player, monsters)
 		
 
+def monsterTurn(monster):
+	
+	(outcome, target) = decideAttack(monster)
+	
+	if outcome == "Melee":
+		attack(monster, target)
+	else:
+		# outcome is a spell
+		cast = outcome.use(monster, target)
+		
+		if cast != False:
+			if outcome.turns > 1:
+				spell_buff = True
+				buffs.append(outcome)
+				
+
+
+def decideAttack(monster):
+	# If AI has low hp, check if heal is possible
+	if (monster.hp * 100 / monster.maxHP) < 30:
+		if len(monster.defenseSpells) > 0:
+			chosenSpell = monster.defenseSpells[0]
+
+			for spell in monster.defenseSpells:
+				if spell.stat != "hp":
+					continue
+				
+				if spell.amount > chosenSpell.amount:
+					if (monster.mana - spell.manaCost) >= 0:
+						chosenSpell = spell
+			
+			if (monster.mana - chosenSpell.manaCost) >= 0:
+				return (chosenSpell, monster)
+		
+		# Check if AI has potions to use
+		# -- NOT IMPLEMENTED YET --
+		
+	
+	# Decide who will be targeted from the player's party
+	# Right now, the AI will pick the party member with lowest HP
+	lowestHP_target = None
+	
+	for member in pl_party.members:
+		if member.hp <= 0:
+			continue
+			
+		if lowestHP_target is not None:
+			if member.hp <= lowestHP_target.hp:
+				lowestHP_target = member
+		else:
+			lowestHP_target = member
+		
+	# AI will attack using Melee if target has low HP and it can be one-hit kill
+	if (lowestHP_target.hp - monster.attk) <= 0 and monster.dexMod > 2:
+		return ("Melee", lowestHP_target)
+	
+	# Decide if AI will attack using Spell or Melee
+	predictedDmg = 0
+	
+	if len(monster.hostileSpells) > 0:
+		chosenSpell = monster.hostileSpells[0]
+
+		for spell in monster.hostileSpells:
+			if spell.stat != "hp":
+				continue
+			
+			if spell.amount > chosenSpell.amount:
+				if (monster.mana - spell.manaCost) >= 0:
+					chosenSpell = spell
+		
+		if (monster.mana - chosenSpell.manaCost) >= 0:
+			if chosenSpell.operator == "*":
+				predictedDmg = chosenSpell.amount * monster.level
+			
+			if predictedDmg > monster.attk:				
+				return (chosenSpell, lowestHP_target)
+				
+	# If no mana or no spells
+	return ("Melee", lowestHP_target)
+				
+
 def getTargetForMonsters():
 	group = []
 	
@@ -200,12 +294,12 @@ def getTargetForMonsters():
 	return random.choice(group)
 
 
-def getTarget(monsters):
+def getTarget(possibleTargets):
 	targets = ""
 	targetsList = []
 	count = 1
 
-	for target in monsters:
+	for target in possibleTargets:
 		if target.hp <= 0:
 			continue
 			
@@ -214,7 +308,7 @@ def getTarget(monsters):
 		targetsList.append(target)
 		
 	print "%s%d. Voltar\n" % (targets, count)
-	print "Escolha quem você quer atacar.\n"
+	print "Escolha o alvo.\n"
 
 	choice = raw_input("> ")
 	
@@ -227,16 +321,15 @@ def getTarget(monsters):
 		return "back"
 	else:
 		print "\t*** Escolha um dos números do menu ***\n"
-		return getTarget(monsters)
+		return getTarget(possibleTargets)
 	
 
 def attack(attacker, target):
 	if attacker.hp > 0:
 		hit = checkHit(attacker, target)
 		sleep(2)
-		if hit == "Condition":
-			print "%s não consegue se mover por estar %s.\n" % (attacker.name, attacker.condition.message)
-		elif hit == "Critical":
+			
+		if hit == "Critical":
 			print "Dano Crítico!"
 			dmg = attacker.attkDamage() * attacker.crit
 			target.hp -= dmg

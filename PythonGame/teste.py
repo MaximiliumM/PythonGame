@@ -1,12 +1,32 @@
-nomes = ["Felipe", "Lucas", "Guilherme", "Marcos", "Bruno", "Leonardo"]
-
-# DESCOBRIR QUANTOS NOMES DA LISTA QUE TEM MAIS DE 6 LETRAS
-contador = 0
-
-for nome in nomes:
+def word_count(text):
 	
-	if len(nome) > 6:
-		contador += 1
+	result = {}
+	words = text.lower().split()
+	
+	for word in words:
 		
-print(contador)
+		if word in result:
+			result[word] += 1
+			
+		else:
+			result[word] = 1
+			
+	return result
+	
+
+result = word_count("The quick brown fox jumps over the lazy dog")
+
+palavra = ""
+quantidade = 0
+
+for key, value in result.items():
+	
+	if value > quantidade:
+		quantidade = value
+		palavra = key
+		
+print(palavra)
+
+
+
 
