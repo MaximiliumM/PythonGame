@@ -2,6 +2,9 @@
 
 class Quest(object):
 	def __init__(self, name, item, reward, firstEncounter, afterFirstEncounter, acceptText, rejectText, afterReject, endTxt, doneTxt, playerDialogue):
+		
+		from party import pl_party
+		
 		self.name = name
 		self.quest_item = item
 		self.reward = reward
@@ -66,7 +69,7 @@ class Quest(object):
 	def startQuest(self):
 	
 		if self.hasDone != True:
-			if self.checkEndQuest(player.pl_inventory.questItems) != True:
+			if self.checkEndQuest(pl_party.inventory.questItems) != True:
 				return self.getText()
 			else:
 				return self.endQuest()
@@ -81,9 +84,7 @@ class QuestItem(object):
 azeitona = QuestItem("Azeitona", "Uma azeitona encontrada em empadas.")
 chapeuFalante = QuestItem("Chapéu Falante", "Um chapéu tagarela safado que quer testar seu conhecimento de Geografia.")
 
-import menu
 from items import itemManager
-import player
 
 # -- Quests --
 # Quest(name, item, reward, firstEncounter, afterFirstEncounter, acceptText, rejectText, afterReject, endTxt, doneTxt, playerChoices)

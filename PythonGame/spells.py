@@ -2,7 +2,6 @@
 
 from random import randint
 from time import sleep
-import player
 
 class Condition(object):
 	def __init__(self, name, amount, afflictChance, cureChance, message):
@@ -51,8 +50,9 @@ class Condition(object):
 			
 
 class Spell(object):
-	def __init__(self, name, amount, mana, hostility, range, statAffected, operator, turns, accuracy=100, condition=None):
+	def __init__(self, name, description, amount, mana, hostility, range, statAffected, operator, turns, accuracy=100, condition=None):
 		self.name = name
+		self.description = description
 		self.manaCost = mana
 		#self.lvlNeeded = lvl
 		self.amount = amount
@@ -173,18 +173,18 @@ class Spell(object):
 		sleep(1)
 			
 # -- Spells Database --
-# Spell(name, amount, mana, hostility, range, statAffected, operator, turns, accuracy, condition)
+# Spell(name, description, amount, mana, hostility, range, statAffected, operator, turns, accuracy, condition)
 # Condition(name, amount, afflictChance, cureChance, message)
 
-healing = Spell("Cura", 8, 20, False, "target", "hp", "+", 1)
-fireball = Spell("Bola de Fogo", 6, 20, True, "target", "hp", "*", 1, 90, Condition("Burn", 3, 25, 25, "queimado"))
-hailstorm = Spell("Hailstorm", 10, 120, True, "area", "hp", "*", 1, 70, Condition("Burn", 3, 25, 25, "queimado"))
-acidarrow = Spell("Acid Arrow", 8, 30, True, "target", "hp", "*", 1, 90)
-poison = Spell("Poison Spray", 3, 12, True, "target", "hp", "*", 1, 100, Condition("Poison", 3, 75, 25, "envenenado"))
-bless = Spell("Bless", 1, 40, False, "target", "all", "+", 3)
-rage = Spell("Fúria", 6, 10, False, "self", "str", "+", 2)
-alacrity = Spell("Alacrity", 4, 10, False, "self", "dex", "+", 2)
-freeze = Spell("Freeze", 6, 20, True, "target", "hp", "*", 1, 100, Condition("Freeze", 0, 30, 30, "congelado")) 
+healing = Spell("Cura", "Recupera 1d8 pontos de vida.", 8, 20, False, "target", "hp", "+", 1)
+fireball = Spell("Bola de Fogo", "Um alvo leva 1d6 de dano por cada level do usuário.\nPode causar o efeito Burn.", 6, 20, True, "target", "hp", "*", 1, 90, Condition("Burn", 3, 25, 25, "queimado"))
+hailstorm = Spell("Hailstorm", "", 10, 120, True, "area", "hp", "*", 1, 70, Condition("Burn", 3, 25, 25, "queimado"))
+acidarrow = Spell("Acid Arrow", "", 8, 30, True, "target", "hp", "*", 1, 90)
+poison = Spell("Poison Spray", "", 3, 12, True, "target", "hp", "*", 1, 100, Condition("Poison", 3, 75, 25, "envenenado"))
+bless = Spell("Bless", "", 1, 40, False, "target", "all", "+", 3)
+rage = Spell("Fúria", "", 6, 10, False, "self", "str", "+", 2)
+alacrity = Spell("Alacrity", "", 4, 10, False, "self", "dex", "+", 2)
+freeze = Spell("Freeze", "", 6, 20, True, "target", "hp", "*", 1, 100, Condition("Freeze", 0, 30, 30, "congelado")) 
 
 barbarian_spells = [rage]
 mage_spells = [fireball, hailstorm, poison]

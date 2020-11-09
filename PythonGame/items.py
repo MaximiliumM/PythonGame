@@ -27,7 +27,7 @@ class Potion(Item):
 		self.amount = healAmount
 
 	def use(self, user):
-		if self.e == "hp":
+		if self.statAffected == "hp":
 			print "Você recuperou %d pontos de vida!\n" % self.amount
 			if user.hp + self.amount > user.maxHP: 
 				user.hp = user.maxHP
@@ -43,6 +43,7 @@ class Potion(Item):
 				print "Você ganhou %d ponto de Inteligência" % self.amount
 			user.intBase += self.amount
 			user.updateModifiers()
+			
 	
 class ItemManager(object):
 	def __init__(self, allItems):
@@ -68,8 +69,7 @@ class ItemManager(object):
 		else:
 			return candidates[0] # only one item, thus first index
 			
-import player
-
+			
 itemManager = ItemManager([
 				
 # -- Weapons -- name, info, damage, critical, percent, price
@@ -100,7 +100,7 @@ Armor("Couraça", "Armadura de couro leve composta de várias camadas de tecido.
 
 Potion("Greater Healing Potion", "Recupera 10 pontos de vida", 10, "hp", 5.00, 30),
 Potion("Lesser Healing Potion", "Recupera 2 pontos de vida", 2, "hp", 30.0, 10),
-Potion("Poção do Conhecimento", "Aumenta sua inteligência em +1", 1, "int", 0.5, 100)
+Potion("Lesser Inteligence Potion", "Aumenta sua inteligência em +1", 1, "int", 0.5, 100)
 
 ])
 

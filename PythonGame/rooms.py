@@ -82,7 +82,7 @@ class Sala_4_pontes(Room):
 
 			raw_input("Pressione ENTER para continuar.")
 
-			battle(Party([monsters.nightmare, monsters.empada], "monster"))
+			battle(Party([monsters.nightmare, monsters.empada, monsters.goblin], "monster"))
 
 			print """
 	Cansado, você levanta os olhos e olha para a forma desforma

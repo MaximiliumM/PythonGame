@@ -119,7 +119,7 @@ class Monster:
 		return self.questItem
 		
 # -- Monsters Database --
-# Monster(name, stre, vit, inte, dex, howManyDices, hit_dice, attk_dice, armor_class, treasure, expGiven, quest)
+# Monster(name, lvl, stre, vit, inte, dex, howManyDices, hit_dice, attk_dice, armor_class, treasure, expGiven, quest)
 	
 nightmare = Monster("Pesadelo", 5, 18, 16, 13, 15, 2, 12, 8, 15, 2, 1000, None, [spells.healing])
 narguilosa = Monster("Narguilosa", 3, 16, 13, 1, 15, 2, 8, 8, 15, 3, 500, None, None)

@@ -5,10 +5,10 @@
 # The main function battle() requires a party of monsters as argument.
 #
 # TO DO:
+# - Need to make AI capable of healing friends.
 # - Line 133: For now, there are no NPCs in the player party, so the potions menu work properly.
 # 	Need to change that in the future.
-# - Line 83: Inventory Management for Party
-# - Line 95: For now, buffs are disabled. Need to make monsters capable of casting spells first.
+# - Line 239: Need to make monsters capable of using potions.
 # ----------------------
 
 from time import sleep
@@ -86,7 +86,7 @@ def endBattle(group):
 			
 		for monster in monsterParty.members:
 			
-			print "Você ganhou %d de experiência!" % monster.exp
+			print "Você ganhou %d de experiência do %s!" % (monster.exp, monster.name)
 			
 			for player in playerParty.members:
 				player.exp += monster.exp
@@ -106,9 +106,7 @@ def endBattle(group):
 				if got_item == False:
 					print "\n\t*** O %s não deu nada ***\n" % monster.name
 			else:
-				# TO DO: Inventory management for party
-				print "Quest Item - Incomplete code"
-				# player.pl.inventory.addQuestItem(monster.getQuestItem())
+				pl_party.inventory.addQuestItem(monster.getQuestItem())
 				
 	sleep(2)
 		
@@ -187,12 +185,12 @@ def playerMenu(player, monsters):
 					playerMenu(player, monsters)
 					
 	elif choice == "3":
-		if len(player.pl.inventory.allPotions) != 0:	
+		if len(pl_party.inventory.allPotions) != 0:	
 			potion = choosePotion()
 			if potion == "back":
 				playerMenu(player, monsters)
 			else:
-				potion.use()
+				potion.use(player)
 		else:
 			print "\t*** Você não tem mais poções! ***\n"
 			playerMenu(player, monsters)
@@ -209,7 +207,7 @@ def monsterTurn(monster):
 		attack(monster, target)
 	else:
 		# outcome is a spell
-		cast = outcome.use(monster, target)
+		cast = outcome.use(monster, [target])
 		
 		if cast != False:
 			if outcome.turns > 1:
@@ -388,8 +386,8 @@ def choosePotion():
 	loop_counter = 0
 	unique_items = []
 
-	for potion in player.pl.inventory.allPotions:
-		item_count = player.pl.inventory.allPotions.count(potion)
+	for potion in pl_party.inventory.allPotions:
+		item_count = pl_party.inventory.allPotions.count(potion)
 		if loop_counter > 0:
 			loop_counter -= 1
 			continue
@@ -409,8 +407,8 @@ def choosePotion():
 
 	if choice < len(unique_items) and choice >= 0:
 		item = unique_items[choice]
-		index = player.pl.inventory.allPotions.index(item)
-		return player.pl.inventory.allPotions.pop(index)
+		index = pl_party.inventory.allPotions.index(item)
+		return pl_party.inventory.allPotions.pop(index)
 	elif choice == len(unique_items):
 		return "back"
 	else:

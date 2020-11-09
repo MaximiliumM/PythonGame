@@ -5,12 +5,16 @@
 
 class Party(object):
 	def __init__(self, members, type):
+		from inventory import PartyInventory
 		
 		self.type = type
 		self.maxMembers = 3
 		self.members = members
 		self.offMembers = []
 		self.faintedMembers = []
+		
+		# -- Party Inventory --
+		self.inventory = PartyInventory(self.type)
 		
 	
 	def changeParty(self):

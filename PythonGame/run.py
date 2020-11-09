@@ -1,7 +1,17 @@
 # python2
 # coding: utf-8
 
+import inventory
+import party
 import player
+import items
+import menu
+import monsters
+import npcs
+import quests
+import rooms
+import shop
+import spells
 import console
 
 def run(args=None):
@@ -13,8 +23,6 @@ def run(args=None):
 	for i in range(player.pl.startWith):
 		player.pl.getNewSpell()
 
-	import rooms
-	import menu
 	next = rooms.sala_do_acordar.story()
 
 	while True:

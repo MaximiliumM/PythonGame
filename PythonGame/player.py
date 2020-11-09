@@ -1,12 +1,10 @@
 # coding: utf-8
 
 from random import randint
-from party import pl_party
-import items
-import quests
+from items import itemManager
+from inventory import PCInventory
 
-
-class Player(object):
+class Player(object):	
 	def __init__(self, name, theclass, lvl, stre, vit, inte, dex):
 		
 		# -- Base Stats --
@@ -33,10 +31,7 @@ class Player(object):
 		self.bonus = 0
 		self.initiative = 0
 		self.condition = None
-		self.inventory = Inventory(
-			items.itemManager.getItemByName('Espada de Madeira'), 
-			items.itemManager.getItemByName('Barril'),
-			items.itemManager.getItemByName('Lesser Healing Potion'))
+		self.inventory = self.getInitialEquip()
 
 		# -- Spells --
 		self.class_spells = []
@@ -65,10 +60,26 @@ class Player(object):
 		return hp + self.vitBase
 
 	def getInitialMana(self):
-		mana = 0
+		mana = 10
 		for i in range(self.intMod):
 			mana += randint(1, 4) * 10
 		return mana
+		
+	def getInitialEquip(self):
+		if self.theclass == "Barbarian":
+			return PCInventory(self.name, 
+			itemManager.getItemByName('Espada de Madeira'), 
+			itemManager.getItemByName('Barril'))
+			
+		elif self.theclass == "Mage":
+			return PCInventory(self.name, 
+			itemManager.getItemByName('Espada de Madeira'), 
+			itemManager.getItemByName('Barril'))
+			
+		elif self.theclass == "Rogue":
+			return PCInventory(self.name, 
+			itemManager.getItemByName('Espada de Madeira'), 
+			itemManager.getItemByName('Barril'))
 
 	def check_lvlUp(self):
 		if self.exp >= self.exp_needed:
@@ -152,48 +163,6 @@ class Player(object):
 		self.initiative = self.dexMod + roll
 		
 
-class Inventory(object):
-	def __init__(self, weapon, armor, potion):
-		self.currentWeapon = weapon
-		self.currentArmor = armor
-
-		self.allWeapons = [self.currentWeapon]
-		self.allArmors = [self.currentArmor]
-		self.allPotions = [potion]
-		self.questItems = []
-		
-	def equip(self, item):
-		if type(item) == items.Weapon:
-			self.currentWeapon = item
-		elif type(item) == items.Armor:
-			self.currentArmor = item
-		
-	def addItem(self, item):
-		if type(item) == items.Weapon:
-			self.addWeapon(item)
-		elif type(item) == items.Armor:
-			self.addArmor(item)
-		elif type(item) == items.Potion:
-			self.addPotion(item)
-		else:
-			raise ValueError('item type not found.')
-
-	def addWeapon(self, weapon):	
-		self.allWeapons.append(weapon)
-		self.allWeapons = sorted(self.allWeapons)
-
-	def addArmor(self, armor):
-		self.allArmors.append(armor)
-		self.allArmors = sorted(self.allArmors)
-
-	def addPotion(self, potion):
-		self.allPotions.append(potion)
-		self.allPotions = sorted(self.allPotions)
-
-	def addQuestItem(self, item):
-		self.questItems.append(item)
-		self.questItems = sorted(self.questItems)
-
 
 pl = object
 
@@ -201,22 +170,21 @@ def debugMode():
 	
 	global pl
 	
+	from party import pl_party
+	
 	pl = Player("Max", "Mage", 1, 8, 14, 18, 15)
 	pl_party.members.append(pl)
 	
 	# NPC Test (name, theclass, lvl, stre, vit, inte, dex)
 	npc = Player("Luna", "Barbarian", 1, 18, 15, 8, 14)
+	npc.getNewSpell()
 	pl_party.members.append(npc)
 	
-	# --- Initial Inventory ----
-	#pl.inventory = Inventory(items.woodsword, items.barrel, items.lesserPot)
-	# --------------------------
-	
 	# -- Test Items --
-	pl.inventory.addPotion(items.itemManager.getItemByName('Lesser Healing Potion'))
-	pl.inventory.addPotion(items.itemManager.getItemByName('Lesser Healing Potion'))
-	pl.inventory.addPotion(items.itemManager.getItemByName('Lesser Healing Potion'))
-	pl.inventory.addWeapon(items.itemManager.getItemByName('Sword of God'))
+	pl_party.inventory.addPotion(itemManager.getItemByName('Lesser Healing Potion'))
+	pl_party.inventory.addPotion(itemManager.getItemByName('Lesser Healing Potion'))
+	pl_party.inventory.addPotion(itemManager.getItemByName('Lesser Healing Potion'))
+	pl_party.inventory.addWeapon(itemManager.getItemByName('Sword of God'))
 
 def class_choice():
 	global pl
